@@ -1,54 +1,94 @@
+-- mhmd2k Hub Loader
+if game.PlaceId ~= 17663805271 then
+    return warn("mhmd2k Hub only works in 'Steal a Brainrot'")
+end
+
 local KEY = "MHMMDWSCRIPTS"
-local HUB_URL = "https://raw.githubusercontent.com/mhmmd2kDEV/mhmd2k_hub0/main/mhmd2k_hub.lua"
 
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
+-- UI LIBRARY
+local gui = Instance.new("ScreenGui", game.CoreGui)
+gui.Name = "mhmd2kHub"
+gui.ResetOnSpawn = false
 
-local gui = Instance.new("ScreenGui", LocalPlayer:WaitForChild("PlayerGui"))
-gui.Name = "mhmd2kLoader"
+-- DARK BACKGROUND
+local bg = Instance.new("Frame", gui)
+bg.Size = UDim2.new(0, 400, 0, 250)
+bg.Position = UDim2.new(0.5, -200, 0.5, -125)
+bg.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+bg.BorderSizePixel = 0
 
-local frame = Instance.new("Frame", gui)
-frame.Size = UDim2.new(0, 250, 0, 130)
-frame.Position = UDim2.new(0.5, -125, 0.5, -65)
-frame.BackgroundColor3 = Color3.fromRGB(30,30,30)
-frame.BorderSizePixel = 0
+-- NEON RAINBOW M LOGO
+local logo = Instance.new("TextLabel", bg)
+logo.Size = UDim2.new(1, 0, 0, 50)
+logo.Text = "M"
+logo.Font = Enum.Font.Fantasy
+logo.TextColor3 = Color3.fromHSV(tick()%5/5, 1, 1)
+logo.TextScaled = true
+logo.BackgroundTransparency = 1
 
-local title = Instance.new("TextLabel", frame)
-title.Size = UDim2.new(1, 0, 0, 30)
-title.Text = "mhmd2k Hub Key"
-title.BackgroundTransparency = 1
-title.TextColor3 = Color3.new(1,1,1)
-title.Font = Enum.Font.GothamBold
-title.TextSize = 18
+-- KEY INPUT
+local keyBox = Instance.new("TextBox", bg)
+keyBox.PlaceholderText = "Enter Key..."
+keyBox.Size = UDim2.new(0.8, 0, 0, 35)
+keyBox.Position = UDim2.new(0.1, 0, 0.6, 0)
+keyBox.Text = ""
+keyBox.TextScaled = true
+keyBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+keyBox.BorderSizePixel = 0
+keyBox.TextColor3 = Color3.new(1, 1, 1)
 
-local input = Instance.new("TextBox", frame)
-input.Size = UDim2.new(1, -20, 0, 30)
-input.Position = UDim2.new(0, 10, 0, 40)
-input.PlaceholderText = "Enter key..."
-input.Text = ""
-input.TextColor3 = Color3.new(1,1,1)
-input.BackgroundColor3 = Color3.fromRGB(50,50,50)
-input.Font = Enum.Font.Gotham
-input.TextSize = 16
-input.BorderSizePixel = 0
+-- SUBMIT BUTTON
+local submitBtn = Instance.new("TextButton", bg)
+submitBtn.Size = UDim2.new(0.5, 0, 0, 35)
+submitBtn.Position = UDim2.new(0.25, 0, 0.8, 0)
+submitBtn.Text = "Submit"
+submitBtn.TextScaled = true
+submitBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+submitBtn.BorderSizePixel = 0
+submitBtn.TextColor3 = Color3.new(1, 1, 1)
 
-local button = Instance.new("TextButton", frame)
-button.Size = UDim2.new(1, -20, 0, 30)
-button.Position = UDim2.new(0, 10, 0, 80)
-button.Text = "Submit"
-button.TextColor3 = Color3.new(1,1,1)
-button.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
-button.Font = Enum.Font.GothamBold
-button.TextSize = 16
-button.BorderSizePixel = 0
+-- Minimize Button
+local minimizeBtn = Instance.new("TextButton", bg)
+minimizeBtn.Size = UDim2.new(0, 30, 0, 30)
+minimizeBtn.Position = UDim2.new(1, -35, 0, 5)
+minimizeBtn.Text = "-"
+minimizeBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+minimizeBtn.TextColor3 = Color3.new(1, 1, 1)
 
-button.MouseButton1Click:Connect(function()
-    if input.Text == KEY then
+-- Small M logo (for minimized state)
+local miniLogo = Instance.new("TextLabel")
+miniLogo.Size = UDim2.new(0, 40, 0, 40)
+miniLogo.Position = UDim2.new(0, 10, 0, 10)
+miniLogo.Text = "M"
+miniLogo.Font = Enum.Font.Fantasy
+miniLogo.TextScaled = true
+miniLogo.Visible = false
+miniLogo.Parent = gui
+miniLogo.TextColor3 = Color3.fromHSV(tick()%5/5, 1, 1)
+miniLogo.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+
+-- MINIMIZE FUNCTIONALITY
+minimizeBtn.MouseButton1Click:Connect(function()
+    bg.Visible = false
+    miniLogo.Visible = true
+end)
+
+-- Restore on Ctrl
+game:GetService("UserInputService").InputBegan:Connect(function(input, gp)
+    if not gp and input.KeyCode == Enum.KeyCode.LeftControl then
+        bg.Visible = true
+        miniLogo.Visible = false
+    end
+end)
+
+-- Submit key and load main
+submitBtn.MouseButton1Click:Connect(function()
+    if keyBox.Text == KEY then
         gui:Destroy()
-        loadstring(game:HttpGet(HUB_URL))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/mhmmd2kDEV/mhmd2k_hub0/main/mhmd2k_hub.lua"))()
     else
-        input.Text = ""
-        input.PlaceholderText = "Wrong key!"
-        input.PlaceholderColor3 = Color3.fromRGB(255, 100, 100)
+        keyBox.Text = "❌ Wrong Key"
+        wait(1)
+        keyBox.Text = ""
     end
 end)
